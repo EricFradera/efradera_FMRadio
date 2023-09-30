@@ -7,7 +7,6 @@ class FmRadioModel extends FMRadioEntity {
     String? radioImage,
     String? radioUrl,
     String? genre,
-    int? countryId,
     String? countryName,
     String? countryFlag,
   }) : super(
@@ -16,7 +15,6 @@ class FmRadioModel extends FMRadioEntity {
             radioImage: radioImage,
             radioUrl: radioUrl,
             genre: genre,
-            countryId: countryId,
             countryName: countryName,
             countryFlag: countryFlag);
 
@@ -27,7 +25,6 @@ class FmRadioModel extends FMRadioEntity {
         radioImage: json['radio_image'] ?? "",
         radioUrl: json['radio_url'] ?? "",
         genre: json['genre'] ?? "",
-        countryId: json['country_id'] ?? "",
         countryName: json['country_name'] ?? "",
         countryFlag: json['country_flag'] ?? "");
   }

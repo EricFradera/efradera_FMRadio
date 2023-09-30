@@ -10,8 +10,8 @@ abstract class RemoteFmState extends Equatable {
   List<Object> get props => [radios!, exception!];
 }
 
-class RemoteRadiosLoading extends RemoteFmState {
-  const RemoteRadiosLoading();
+class RemoteFMLoading extends RemoteFmState {
+  const RemoteFMLoading();
 }
 
 class RemoteFMLoaded extends RemoteFmState {

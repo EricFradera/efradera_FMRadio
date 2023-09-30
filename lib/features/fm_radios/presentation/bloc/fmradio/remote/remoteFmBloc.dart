@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RemoteFMBloc extends Bloc<RemoteFMEvent, RemoteFmState> {
   final GetFmListUseCase _getFmListUseCase;
-  RemoteFMBloc(this._getFmListUseCase) : super(const RemoteRadiosLoading()) {
+  RemoteFMBloc(this._getFmListUseCase) : super(const RemoteFMLoading()) {
     on<GetRadios>(onGetRadios);
   }
   void onGetRadios(GetRadios radios, Emitter<RemoteFmState> state) async {
