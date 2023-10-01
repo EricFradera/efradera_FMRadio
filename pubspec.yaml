@@ -46,6 +46,7 @@ dependencies:
   # http request
   retrofit: ^4.0.1
   dio: ^5.3.3
+  image_sequence_animator: ^2.0.0
 
   ##Optional
   floor: ^1.4.2
