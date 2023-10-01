@@ -7,6 +7,7 @@ abstract class RemoteFmState extends Equatable {
   final DioException? exception;
 
   const RemoteFmState({this.radios, this.exception});
+  @override
   List<Object> get props => [radios!, exception!];
 }
 

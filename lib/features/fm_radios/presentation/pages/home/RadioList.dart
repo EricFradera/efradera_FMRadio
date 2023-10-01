@@ -2,7 +2,6 @@ import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/re
 import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/remote/remoteFmState.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RadioList extends StatelessWidget {
@@ -17,7 +16,7 @@ class RadioList extends StatelessWidget {
   }
 
   _buildAppbar() {
-    return AppBar(title: Text("This is an FM  radio"));
+    return AppBar(title: const Text("This is an FM  radio"));
   }
 
   _buildBody() {
