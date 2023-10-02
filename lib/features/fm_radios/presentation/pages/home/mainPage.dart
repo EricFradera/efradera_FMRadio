@@ -3,6 +3,8 @@ import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/re
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_radio_player/flutter_radio_player.dart';
+import 'package:flutter_radio_player/models/frp_source_modal.dart';
 
 class Drawer3D extends StatefulWidget {
   const Drawer3D({super.key});
@@ -21,7 +23,7 @@ class _Drawer3DState extends State<Drawer3D>
   Size _screen = const Size(0, 0);
   late CurvedAnimation _animator;
   late CurvedAnimation _objAnimator;
-  //final player = FlutterRadioPlayer();
+  final player = FlutterRadioPlayer();
 
   @override
   void initState() {
@@ -326,12 +328,12 @@ class _Drawer3DState extends State<Drawer3D>
       ),
       onTap: () {
         print(url!);
-        //_playAudio(url);
+        _playAudio(url);
       },
     );
   }
 
-  /*_playAudio(String? url) {
+  _playAudio(String? url) {
     final source = FRPSource(
       mediaSources: <MediaSources>[
         MediaSources(
@@ -342,5 +344,5 @@ class _Drawer3DState extends State<Drawer3D>
     );
     player.addMediaSources(source);
     player.play();
-  }*/
+  }
 }
