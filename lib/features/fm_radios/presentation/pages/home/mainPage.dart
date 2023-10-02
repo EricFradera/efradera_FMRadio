@@ -3,8 +3,8 @@ import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/re
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_radio_player/flutter_radio_player.dart';
-import 'package:flutter_radio_player/models/frp_source_modal.dart';
+import 'package:image_sequence_animator/image_sequence_animator.dart';
+import 'package:radio_player/radio_player.dart';
 
 class Drawer3D extends StatefulWidget {
   const Drawer3D({super.key});
@@ -23,7 +23,10 @@ class _Drawer3DState extends State<Drawer3D>
   Size _screen = const Size(0, 0);
   late CurvedAnimation _animator;
   late CurvedAnimation _objAnimator;
-  final player = FlutterRadioPlayer();
+  final RadioPlayer _radioPlayer = RadioPlayer();
+  bool isPlaying = false;
+  late ImageSequenceAnimatorState imageSequenceAnimator;
+  bool wasPlaying = false;
 
   @override
   void initState() {
@@ -42,7 +45,27 @@ class _Drawer3DState extends State<Drawer3D>
       curve: Curves.easeInOut,
       reverseCurve: Curves.easeIn,
     );
-    //player.initPlayer();
+    initRadioPlayer();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _radioPlayer.stop();
+  }
+
+  void initRadioPlayer() {
+    _radioPlayer.setChannel(
+      title: 'Radio Player',
+      url: 'http://peridot.streamguys.com:7150/Mirchi',
+    );
+
+    _radioPlayer.stateStream.listen((value) {
+      setState(() {
+        isPlaying = value;
+      });
+    });
   }
 
   @override
@@ -62,12 +85,11 @@ class _Drawer3DState extends State<Drawer3D>
         onHorizontalDragEnd: _onDragEnd,
         child: Stack(
           children: <Widget>[
-            //Space color - it also makes the empty space touchable
             Container(color: const Color.fromARGB(255, 228, 224, 213)),
             _buildBackground(),
-            //_backgroundPlaceHolder(),
-            // _build3dObject(),
+            _build3dObject(),
             _buildDrawer(),
+            _buildButton()
           ],
         ),
       ),
@@ -84,10 +106,12 @@ class _Drawer3DState extends State<Drawer3D>
       final pos = globalDelta / _screen.width;
       if (_drawerVisible && pos <= 1.0) return;
       _animationController.value = pos;
+      imageSequenceAnimator.play();
     } else {
       final pos = 1 - (globalDelta.abs() / _screen.width);
       if (!_drawerVisible && pos >= 0.0) return;
       _animationController.value = pos;
+      imageSequenceAnimator.rewind();
     }
   }
 
@@ -123,12 +147,6 @@ class _Drawer3DState extends State<Drawer3D>
     }
   }
 
-  _backgroundPlaceHolder() {
-    return const Center(
-      child: Image(image: AssetImage('assets/placeholder.png')),
-    );
-  }
-
   _buildBody() {
     return BlocBuilder<RemoteFMBloc, RemoteFmState>(builder: (_, state) {
       if (state is RemoteFMLoading) {
@@ -150,7 +168,6 @@ class _Drawer3DState extends State<Drawer3D>
     });
   }
 
-//Background IMPORTANT
   _buildBackground() => Positioned.fill(
         top: -_extraHeight,
         bottom: -_extraHeight,
@@ -170,7 +187,6 @@ class _Drawer3DState extends State<Drawer3D>
             color: const Color(0xffe8dfce),
             child: Stack(
               children: <Widget>[
-                //Fender word
                 Positioned(
                   top: _extraHeight + 0.1 * _screen.height,
                   left: 80,
@@ -179,8 +195,6 @@ class _Drawer3DState extends State<Drawer3D>
                     alignment: Alignment.centerLeft,
                   ),
                 ),
-                _backgroundPlaceHolder(),
-                // Shadow
                 AnimatedBuilder(
                   animation: _animator,
                   builder: (_, __) => Container(
@@ -230,15 +244,11 @@ class _Drawer3DState extends State<Drawer3D>
         ),
       );
 
-  /*_build3dObject() => Positioned(
-        top: 0.1 * _screen.height,
-        bottom: 0.22 * _screen.height,
-        left: _maxSlide - _screen.width * 0.5,
-        right: _screen.width * 0.85 - _maxSlide,
+  _build3dObject() => Positioned(
         child: AnimatedBuilder(
           animation: _objAnimator,
           builder: (_, __) => ImageSequenceAnimator(
-            "assets/guitarSequence", //folderName
+            "assets/3d", //folderName
             "", //fileName
             1, //suffixStart
             4, //suffixCount
@@ -246,14 +256,23 @@ class _Drawer3DState extends State<Drawer3D>
             120, //frameCount
             fps: 60,
             isLooping: false,
-            isBoomerang: true,
+            isBoomerang: false,
             isAutoPlay: false,
-            frame: (_objAnimator.value * 120).ceil(),
+            onReadyToPlay: onReadyToPlay,
+            onPlaying: onPlaying,
+            waitUntilCacheIsComplete: true,
           ),
         ),
-      );*/
+      );
+  void onReadyToPlay(ImageSequenceAnimatorState _imageSequenceAnimator) {
+    imageSequenceAnimator = _imageSequenceAnimator;
+  }
 
-  /*_buildHeader() => SafeArea(
+  void onPlaying(ImageSequenceAnimatorState _imageSequenceAnimator) {
+    setState(() {});
+  }
+
+  _buildHeader() => SafeArea(
         child: AnimatedBuilder(
             animation: _animator,
             builder: (_, __) {
@@ -282,7 +301,7 @@ class _Drawer3DState extends State<Drawer3D>
                 ),
               );
             }),
-      );*/
+      );
   _getGenre(String? tag) {
     if (tag == null || tag.isEmpty) {
       return const Text("Genre: Not specified",
@@ -327,22 +346,39 @@ class _Drawer3DState extends State<Drawer3D>
             )),
       ),
       onTap: () {
-        print(url!);
         _playAudio(url);
       },
     );
   }
 
-  _playAudio(String? url) {
-    final source = FRPSource(
-      mediaSources: <MediaSources>[
-        MediaSources(
-          url: url,
-          isPrimary: true,
-        ),
-      ],
+  _buildButton() {
+    if (_drawerVisible) return Container();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(105, 715, 0, 0),
+      child: TextButton(
+          onPressed: _onPressPlay,
+          child: const Text(
+            "Play",
+            style: TextStyle(
+                fontFamily: 'Tapem',
+                color: Color.fromARGB(255, 255, 255, 255),
+                fontSize: 45),
+          )),
     );
-    player.addMediaSources(source);
-    player.play();
+  }
+
+  _onPressPlay() {
+    if (isPlaying) {
+      isPlaying = false;
+      _radioPlayer.pause();
+    } else {
+      isPlaying = true;
+      _radioPlayer.play();
+    }
+  }
+
+  _playAudio(String? url) {
+    _radioPlayer.play();
+    isPlaying = true;
   }
 }

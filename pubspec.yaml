@@ -48,7 +48,7 @@ dependencies:
   dio: ^5.3.3
   image_sequence_animator: ^2.0.0
   audio_video_progress_bar: ^2.0.0
-  flutter_radio_player: ^2.0.2
+  radio_player: ^1.5.0
 
   rxdart: ^0.27.7
 
@@ -80,6 +80,7 @@ flutter:
 
   assets:
     - assets/placeholder.png
+    - assets/3d/
 
   fonts:
      - family: Tapem
