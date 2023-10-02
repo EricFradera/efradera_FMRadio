@@ -21,13 +21,14 @@ class _Drawer3DState extends State<Drawer3D>
   Size _screen = const Size(0, 0);
   late CurvedAnimation _animator;
   late CurvedAnimation _objAnimator;
+  //final player = FlutterRadioPlayer();
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
     );
     _animator = CurvedAnimation(
       parent: _animationController,
@@ -39,6 +40,7 @@ class _Drawer3DState extends State<Drawer3D>
       curve: Curves.easeInOut,
       reverseCurve: Curves.easeIn,
     );
+    //player.initPlayer();
   }
 
   @override
@@ -59,7 +61,7 @@ class _Drawer3DState extends State<Drawer3D>
         child: Stack(
           children: <Widget>[
             //Space color - it also makes the empty space touchable
-            Container(color: Color.fromARGB(255, 228, 224, 213)),
+            Container(color: const Color.fromARGB(255, 228, 224, 213)),
             _buildBackground(),
             //_backgroundPlaceHolder(),
             // _build3dObject(),
@@ -112,10 +114,11 @@ class _Drawer3DState extends State<Drawer3D>
   }
 
   void _toggleDrawer() {
-    if (_animationController.value < 0.5)
+    if (_animationController.value < 0.5) {
       _animationController.forward();
-    else
+    } else {
       _animationController.reverse();
+    }
   }
 
   _backgroundPlaceHolder() {
@@ -136,7 +139,8 @@ class _Drawer3DState extends State<Drawer3D>
         return ListView(
           physics: const BouncingScrollPhysics(),
           children: state.radios!.map((radio) {
-            return _buildCard(radio.radioName, radio.countryName, radio.genre);
+            return _buildCard(radio.radioName, radio.countryName, radio.genre,
+                radio.radioUrl);
           }).toList(),
         );
       }
@@ -161,7 +165,7 @@ class _Drawer3DState extends State<Drawer3D>
             ),
           ),
           child: Container(
-            color: Color(0xffe8dfce),
+            color: const Color(0xffe8dfce),
             child: Stack(
               children: <Widget>[
                 //Fender word
@@ -209,7 +213,7 @@ class _Drawer3DState extends State<Drawer3D>
             );
           },
           child: Container(
-            color: Color.fromARGB(255, 255, 196, 0),
+            color: const Color.fromARGB(255, 255, 196, 0),
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
@@ -278,19 +282,19 @@ class _Drawer3DState extends State<Drawer3D>
             }),
       );*/
   _getGenre(String? tag) {
-    if (tag == null) {
-      return const Text("Genre:Not specified",
+    if (tag == null || tag.isEmpty) {
+      return const Text("Genre: Not specified",
           style: TextStyle(fontFamily: 'Sani', fontSize: 15));
     }
-    if (tag.length > 20) {
-      return Text("Genre:${tag.substring(1, 20)}",
+    if (tag.length > 50) {
+      return Text("Genre:${tag.substring(0, 50)}",
           style: const TextStyle(fontFamily: 'Sani', fontSize: 15));
     }
-    return Text("Genre:$tag",
+    return Text("Genre: $tag",
         style: const TextStyle(fontFamily: 'Sani', fontSize: 15));
   }
 
-  Widget _buildCard(String? name, String? country, String? tag) {
+  Widget _buildCard(String? name, String? country, String? tag, String? url) {
     return InkWell(
       child: Container(
         margin: const EdgeInsets.all(5.0),
@@ -313,16 +317,30 @@ class _Drawer3DState extends State<Drawer3D>
               children: [
                 Text(name!,
                     style: const TextStyle(fontFamily: 'Tapem', fontSize: 30)),
-                Text("from $country",
+                Text("From $country",
                     style: const TextStyle(fontFamily: 'Sani', fontSize: 15)),
-                Spacer(),
+                const Spacer(),
                 _getGenre(tag)
               ],
             )),
       ),
       onTap: () {
-        print(name!);
+        print(url!);
+        //_playAudio(url);
       },
     );
   }
+
+  /*_playAudio(String? url) {
+    final source = FRPSource(
+      mediaSources: <MediaSources>[
+        MediaSources(
+          url: url,
+          isPrimary: true,
+        ),
+      ],
+    );
+    player.addMediaSources(source);
+    player.play();
+  }*/
 }

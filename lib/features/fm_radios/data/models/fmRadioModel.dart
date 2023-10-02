@@ -23,7 +23,7 @@ class FmRadioModel extends FMRadioEntity {
         radioId: json['stationuuid'] ?? "",
         radioName: json['name'] ?? "",
         radioImage: json['favicon'] ?? "",
-        radioUrl: json['url_resolved'] ?? "", //or url
+        radioUrl: json['url'] ?? "", //or url
         genre: json['tags'] ?? "",
         countryName: json['country'] ?? "",
         countrycode: json['countrycode'] ?? "");
