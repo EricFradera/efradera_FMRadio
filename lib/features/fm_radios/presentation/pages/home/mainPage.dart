@@ -112,6 +112,7 @@ class _Drawer3DState extends State<Drawer3D>
       if (!_drawerVisible && pos >= 0.0) return;
       _animationController.value = pos;
       imageSequenceAnimator.rewind();
+      imageSequenceAnimator.
     }
   }
 
