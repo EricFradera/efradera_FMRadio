@@ -8,7 +8,7 @@ class FmRadioModel extends FMRadioEntity {
     String? radioUrl,
     String? genre,
     String? countryName,
-    String? countryFlag,
+    String? countrycode,
   }) : super(
             radioId: radioId,
             radioName: radioName,
@@ -16,16 +16,16 @@ class FmRadioModel extends FMRadioEntity {
             radioUrl: radioUrl,
             genre: genre,
             countryName: countryName,
-            countryFlag: countryFlag);
+            countrycode: countrycode);
 
   factory FmRadioModel.fromJson(Map<String, dynamic> json) {
     return FmRadioModel(
-        radioId: json['radio_id'] ?? "",
-        radioName: json['radio_name'] ?? "",
-        radioImage: json['radio_image'] ?? "",
-        radioUrl: json['radio_url'] ?? "",
-        genre: json['genre'] ?? "",
-        countryName: json['country_name'] ?? "",
-        countryFlag: json['country_flag'] ?? "");
+        radioId: json['stationuuid'] ?? "",
+        radioName: json['name'] ?? "",
+        radioImage: json['favicon'] ?? "",
+        radioUrl: json['url_resolved'] ?? "", //or url
+        genre: json['tags'] ?? "",
+        countryName: json['country'] ?? "",
+        countrycode: json['countrycode'] ?? "");
   }
 }

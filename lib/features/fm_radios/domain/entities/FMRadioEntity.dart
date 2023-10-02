@@ -8,9 +8,8 @@ class FMRadioEntity extends Equatable {
   final String? radioImage;
   final String? radioUrl;
   final String? genre;
-  final int? countryId;
   final String? countryName;
-  final String? countryFlag;
+  final String? countrycode;
 
   const FMRadioEntity(
       {this.radioId,
@@ -18,9 +17,8 @@ class FMRadioEntity extends Equatable {
       this.radioImage,
       this.radioUrl,
       this.genre,
-      this.countryId,
       this.countryName,
-      this.countryFlag});
+      this.countrycode});
 
   @override
   List<Object?> get props {
@@ -30,9 +28,8 @@ class FMRadioEntity extends Equatable {
       radioImage,
       radioUrl,
       genre,
-      countryId,
       countryName,
-      countryFlag
+      countrycode
     ];
   }
 }

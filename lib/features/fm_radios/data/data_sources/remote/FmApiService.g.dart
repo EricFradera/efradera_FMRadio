@@ -13,8 +13,7 @@ class _FMApiService implements FMApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??=
-        'https://radio-world-75-000-worldwide-fm-radio-stations.p.rapidapi.com';
+    baseUrl ??= 'http://all.api.radio-browser.info/json/stations';
   }
 
   final Dio _dio;
@@ -22,17 +21,13 @@ class _FMApiService implements FMApiService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<FmRadioModel>>> getListRadios() async {
+  Future<HttpResponse<List<FmRadioModel>>> getListRadios({int? limit}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'X-RapidAPI-Key': 'b364ac7f21mshabdd99a96a5685cp175cf9jsnb54d9d834d4f',
-      r'X-RapidAPI-Host':
-          'radio-world-75-000-worldwide-fm-radio-stations.p.rapidapi.com',
-    };
-    _headers.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{r'limit': limit};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _result = await _dio.fetch<List<dynamic>>(
         _setStreamType<HttpResponse<List<FmRadioModel>>>(Options(
       method: 'GET',
       headers: _headers,
@@ -40,7 +35,7 @@ class _FMApiService implements FMApiService {
     )
             .compose(
               _dio.options,
-              '/get_home.php',
+              '/topclick',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -49,9 +44,8 @@ class _FMApiService implements FMApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    List<FmRadioModel> value = _result.data!['featured']
-        .map<FmRadioModel>(
-            (dynamic i) => FmRadioModel.fromJson(i as Map<String, dynamic>))
+    var value = _result.data!
+        .map((dynamic i) => FmRadioModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;

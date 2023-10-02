@@ -8,11 +8,7 @@ part 'FmApiService.g.dart';
 abstract class FMApiService {
   factory FMApiService(Dio dio) = _FMApiService;
 
-  @GET('/get_home.php')
-  @Headers(<String, dynamic>{
-    'X-RapidAPI-Key': 'b364ac7f21mshabdd99a96a5685cp175cf9jsnb54d9d834d4f',
-    'X-RapidAPI-Host':
-        'radio-world-75-000-worldwide-fm-radio-stations.p.rapidapi.com'
-  })
-  Future<HttpResponse<List<FmRadioModel>>> getListRadios();
+  @GET('/topclick')
+  Future<HttpResponse<List<FmRadioModel>>> getListRadios(
+      {@Query("limit") int? limit});
 }

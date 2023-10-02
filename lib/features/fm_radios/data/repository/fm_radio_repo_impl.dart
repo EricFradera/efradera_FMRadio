@@ -13,7 +13,7 @@ class FmRadioReposImpl implements FMRadioRepository {
   @override
   Future<DataState<List<FmRadioModel>>> getListRadios() async {
     try {
-      final httpResponse = await _newsApiService.getListRadios();
+      final httpResponse = await _newsApiService.getListRadios(limit: 20);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSucces(httpResponse.data);
       }

@@ -1,4 +1,8 @@
+import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/remote/remoteFmBloc.dart';
+import 'package:efradera_fmradio/features/fm_radios/presentation/bloc/fmradio/remote/remoteFmState.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Drawer3D extends StatefulWidget {
   const Drawer3D({super.key});
@@ -55,8 +59,9 @@ class _Drawer3DState extends State<Drawer3D>
         child: Stack(
           children: <Widget>[
             //Space color - it also makes the empty space touchable
-            Container(color: Color.fromARGB(255, 204, 150, 0)),
+            Container(color: Color.fromARGB(255, 228, 224, 213)),
             _buildBackground(),
+            //_backgroundPlaceHolder(),
             // _build3dObject(),
             _buildDrawer(),
           ],
@@ -113,6 +118,32 @@ class _Drawer3DState extends State<Drawer3D>
       _animationController.reverse();
   }
 
+  _backgroundPlaceHolder() {
+    return const Center(
+      child: Image(image: AssetImage('assets/placeholder.png')),
+    );
+  }
+
+  _buildBody() {
+    return BlocBuilder<RemoteFMBloc, RemoteFmState>(builder: (_, state) {
+      if (state is RemoteFMLoading) {
+        return const Center(child: CupertinoActivityIndicator());
+      }
+      if (state is RemoteFMError) {
+        return const Center(child: Icon(Icons.refresh));
+      }
+      if (state is RemoteFMLoaded) {
+        return ListView(
+          physics: const BouncingScrollPhysics(),
+          children: state.radios!.map((radio) {
+            return _buildCard(radio.radioName, radio.countryName, radio.genre);
+          }).toList(),
+        );
+      }
+      return const SizedBox();
+    });
+  }
+
 //Background IMPORTANT
   _buildBackground() => Positioned.fill(
         top: -_extraHeight,
@@ -127,6 +158,32 @@ class _Drawer3DState extends State<Drawer3D>
                 ..rotateY((3.14 / 2 + 0.1) * -_animator.value),
               alignment: Alignment.centerLeft,
               child: widget,
+            ),
+          ),
+          child: Container(
+            color: Color(0xffe8dfce),
+            child: Stack(
+              children: <Widget>[
+                //Fender word
+                Positioned(
+                  top: _extraHeight + 0.1 * _screen.height,
+                  left: 80,
+                  child: Transform.rotate(
+                    angle: 90 * (3.14 / 180),
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                _backgroundPlaceHolder(),
+                // Shadow
+                AnimatedBuilder(
+                  animation: _animator,
+                  builder: (_, __) => Container(
+                    color: Colors.black.withAlpha(
+                      (150 * _animator.value).floor(),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -159,26 +216,7 @@ class _Drawer3DState extends State<Drawer3D>
                   top: _extraHeight,
                   bottom: _extraHeight,
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                        _buildCard(),
-                      ],
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(10.0), child: _buildBody()),
                 ),
               ],
             ),
@@ -239,36 +277,52 @@ class _Drawer3DState extends State<Drawer3D>
               );
             }),
       );*/
+  _getGenre(String? tag) {
+    if (tag == null) {
+      return const Text("Genre:Not specified",
+          style: TextStyle(fontFamily: 'Sani', fontSize: 15));
+    }
+    if (tag.length > 20) {
+      return Text("Genre:${tag.substring(1, 20)}",
+          style: const TextStyle(fontFamily: 'Sani', fontSize: 15));
+    }
+    return Text("Genre:$tag",
+        style: const TextStyle(fontFamily: 'Sani', fontSize: 15));
+  }
 
-  _buildCard() {
-    return Container(
-      margin: const EdgeInsets.all(5.0),
-      height: 100,
-      decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 232, 228, 217),
-          borderRadius: BorderRadius.circular(5.0),
-          border: Border.all(
-              color: const Color.fromARGB(255, 49, 47, 40), width: 2.0),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.85),
-                spreadRadius: 1,
-                blurRadius: 5)
-          ]),
+  Widget _buildCard(String? name, String? country, String? tag) {
+    return InkWell(
       child: Container(
-          margin: const EdgeInsets.all(6.0),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Hyper Meteor",
-                  style: TextStyle(fontFamily: 'Tapem', fontSize: 30)),
-              Text("by Vertex  Pop",
-                  style: TextStyle(fontFamily: 'Sani', fontSize: 15)),
-              Spacer(),
-              Text("Genre: POP",
-                  style: TextStyle(fontFamily: 'Sani', fontSize: 15))
-            ],
-          )),
+        margin: const EdgeInsets.all(5.0),
+        height: 150,
+        decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 232, 228, 217),
+            borderRadius: BorderRadius.circular(5.0),
+            border: Border.all(
+                color: const Color.fromARGB(255, 49, 47, 40), width: 2.0),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.85),
+                  spreadRadius: 1,
+                  blurRadius: 5)
+            ]),
+        child: Container(
+            margin: const EdgeInsets.all(6.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name!,
+                    style: const TextStyle(fontFamily: 'Tapem', fontSize: 30)),
+                Text("from $country",
+                    style: const TextStyle(fontFamily: 'Sani', fontSize: 15)),
+                Spacer(),
+                _getGenre(tag)
+              ],
+            )),
+      ),
+      onTap: () {
+        print(name!);
+      },
     );
   }
 }
