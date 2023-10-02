@@ -33,7 +33,7 @@ class _Drawer3DState extends State<Drawer3D>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 500),
     );
     _animator = CurvedAnimation(
       parent: _animationController,
@@ -50,7 +50,6 @@ class _Drawer3DState extends State<Drawer3D>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _radioPlayer.stop();
   }
@@ -112,7 +111,6 @@ class _Drawer3DState extends State<Drawer3D>
       if (!_drawerVisible && pos >= 0.0) return;
       _animationController.value = pos;
       imageSequenceAnimator.rewind();
-      imageSequenceAnimator.
     }
   }
 
@@ -204,6 +202,23 @@ class _Drawer3DState extends State<Drawer3D>
                     ),
                   ),
                 ),
+                Positioned(
+                    child: Center(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(20, 140, 20, 140),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromARGB(255, 120, 119, 114)
+                              .withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 15,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                  ),
+                ))
               ],
             ),
           ),
@@ -230,7 +245,7 @@ class _Drawer3DState extends State<Drawer3D>
             );
           },
           child: Container(
-            color: const Color.fromARGB(255, 255, 196, 0),
+            color: Color.fromARGB(255, 234, 197, 48),
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
@@ -246,22 +261,24 @@ class _Drawer3DState extends State<Drawer3D>
       );
 
   _build3dObject() => Positioned(
-        child: AnimatedBuilder(
-          animation: _objAnimator,
-          builder: (_, __) => ImageSequenceAnimator(
-            "assets/3d", //folderName
-            "", //fileName
-            1, //suffixStart
-            4, //suffixCount
-            "png", //fileFormat
-            120, //frameCount
-            fps: 60,
-            isLooping: false,
-            isBoomerang: false,
-            isAutoPlay: false,
-            onReadyToPlay: onReadyToPlay,
-            onPlaying: onPlaying,
-            waitUntilCacheIsComplete: true,
+        child: Center(
+          child: AnimatedBuilder(
+            animation: _objAnimator,
+            builder: (_, __) => ImageSequenceAnimator(
+              "assets/3d", //folderName
+              "", //fileName
+              1, //suffixStart
+              4, //suffixCount
+              "png", //fileFormat
+              15, //frameCount
+              fps: 30,
+              isLooping: false,
+              isBoomerang: false,
+              isAutoPlay: false,
+              onReadyToPlay: onReadyToPlay,
+              onPlaying: onPlaying,
+              waitUntilCacheIsComplete: true,
+            ),
           ),
         ),
       );
@@ -273,36 +290,6 @@ class _Drawer3DState extends State<Drawer3D>
     setState(() {});
   }
 
-  _buildHeader() => SafeArea(
-        child: AnimatedBuilder(
-            animation: _animator,
-            builder: (_, __) {
-              return Transform.translate(
-                offset: Offset((_screen.width - 60) * _animator.value, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: InkWell(
-                        onTap: _toggleDrawer,
-                        child: Icon(Icons.menu),
-                      ),
-                    ),
-                    Opacity(
-                      opacity: 1 - _animator.value,
-                      child: Text(
-                        "PRODUCT DETAIL",
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                    ),
-                    SizedBox(width: 50, height: 50),
-                  ],
-                ),
-              );
-            }),
-      );
   _getGenre(String? tag) {
     if (tag == null || tag.isEmpty) {
       return const Text("Genre: Not specified",
@@ -355,15 +342,15 @@ class _Drawer3DState extends State<Drawer3D>
   _buildButton() {
     if (_drawerVisible) return Container();
     return Padding(
-      padding: const EdgeInsets.fromLTRB(105, 715, 0, 0),
+      padding: const EdgeInsets.fromLTRB(75, 720, 0, 0),
       child: TextButton(
           onPressed: _onPressPlay,
           child: const Text(
-            "Play",
+            "Play/Pause",
             style: TextStyle(
                 fontFamily: 'Tapem',
                 color: Color.fromARGB(255, 255, 255, 255),
-                fontSize: 45),
+                fontSize: 30),
           )),
     );
   }
